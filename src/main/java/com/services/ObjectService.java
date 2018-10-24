@@ -36,6 +36,7 @@ public class ObjectService {
 
         int positive = 0;
         int negative = 0;
+        int number = 1;
         while ((line = bufRead.readLine()) != null) {
             String[] array = line.split(",");
             DataObject o = new DataObject(
@@ -51,7 +52,7 @@ public class ObjectService {
                     Integer.parseInt(array[1])
             );
             int classByObject = this.getClassByObject(o);
-            System.out.print(o + " ");
+            System.out.print(number++ + " ");
             if (o.getCategory() == 2) {
                 positive++;
                 System.out.print("Expected: 2 ");
@@ -73,8 +74,11 @@ public class ObjectService {
                     System.out.print("Get: 2 ");
                 }
             }
-            System.out.println();
+            System.out.print(", ");
         }
+        System.out.println();
+        System.out.println("Positive: " + positive);
+        System.out.println("Negative: " + negative);
         matrixModel.setAccuracy(
                 ((float) matrixModel.getTruePositive() + (float) matrixModel.getTrueNegative())
                         /
