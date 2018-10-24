@@ -12,17 +12,22 @@ import java.util.ArrayList;
 
 public class ObjectService {
     public static int k = 5;
-    SimptomsDAO simptomsDAO = new SimptomsDAO();
+    private SimptomsDAO simptomsDAO;
+    private ArrayList objs;
 
     public ObjectService() throws SQLException, IOException, ClassNotFoundException {
+        System.out.println("Start learning");
+        this.simptomsDAO = new SimptomsDAO();
+        this.objs = (ArrayList) simptomsDAO.findAllObjects();
+        System.out.println("Amount of Objects: " + objs.size());
     }
 
     public int getClassByObject(DataObject o) throws SQLException {
-        ArrayList objs = (ArrayList) simptomsDAO.findAllObjects();
-        return kNN(o, objs);
+        return kNN(o, this.objs);
     }
 
     public MatrixModel getMatrix(String file) throws IOException, SQLException {
+        System.out.println("Start testing");
         FileReader input = new FileReader(file);
         BufferedReader bufRead = new BufferedReader(input);
         String line = null;
@@ -46,19 +51,29 @@ public class ObjectService {
                     Integer.parseInt(array[1])
             );
             int classByObject = this.getClassByObject(o);
+            System.out.print(o + " ");
             if (o.getCategory() == 2) {
                 positive++;
-                if (classByObject == 2)
+                System.out.print("Expected: 2 ");
+                if (classByObject == 2) {
                     matrixModel.setTruePositive(matrixModel.getTruePositive() + 1);
-                else
+                    System.out.print("Get: 2 ");
+                } else {
                     matrixModel.setFalseNegative(matrixModel.getFalseNegative() + 1);
+                    System.out.print("Get: 2 ");
+                }
             } else {
+                System.out.print("Expected: 4 ");
                 negative++;
-                if (classByObject == 4)
+                if (classByObject == 4) {
                     matrixModel.setTrueNegative(matrixModel.getTrueNegative() + 1);
-                else
+                    System.out.print("Get: 2 ");
+                } else {
                     matrixModel.setFalsePositive(matrixModel.getFalsePositive() + 1);
+                    System.out.print("Get: 2 ");
+                }
             }
+            System.out.println();
         }
         matrixModel.setAccuracy(
                 ((float) matrixModel.getTruePositive() + (float) matrixModel.getTrueNegative())
@@ -117,5 +132,4 @@ public class ObjectService {
                 Math.pow(o.getNormalNucleoli() - ref.getNormalNucleoli(), 2) +
                 Math.pow(o.getMitoses() - ref.getMitoses(), 2);
     }
-
 }
